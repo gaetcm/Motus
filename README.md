@@ -1,7 +1,7 @@
 Pour faire fonctionner le jeu, initlialisez npm et  installez les packages nécessaires :
 ```
 npm install
-npm install play-sounds colors readline
+npm install play-sound colors readline
 ```
 Pour déclencher le jeu entrez node motus.js et le nombre d'essai que vous voulez. Par exemple :
 ```
