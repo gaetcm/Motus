@@ -23,6 +23,17 @@ const sleep = (milliseconds) => {
   }
 };
 const isSame = (a, b) => {
+  if (a.length !== b.length) {
+    return (
+      console.log("\nC'est perdu ! =("),
+      inputText.close(),
+      player.play("./assets/sounds/lose.wav", (err) => {
+        if (err) {
+          console.error("Impossible de jouer le son:", err);
+        }
+      })
+    );
+  }
   let isCharSame = true;
   for (let i = 0; i < a.length; i++) {
     sleep(6000);
@@ -91,7 +102,7 @@ const life = process.argv[2];
 let remainingLives = life;
 
 const playMotus = (mot) => {
-  console.log("\nvous avez essayé le mot : " + mot);
+  sleep(2000, console.log("\nvous avez essayé le mot : " + mot));
 
   isSame(guessWord, mot);
 
