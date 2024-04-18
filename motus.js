@@ -1,8 +1,12 @@
 // Pour faire fonctionner le jeu, initlialisez npm et  installez les packages nécessaires :
 // npm install
-// npm install play-sounds colors readline
+// npm install play-sound colors readline
 // Pour déclencher le jeu entrez node motus.js et le nombre d'essai que vous voulez. Par exemple :
 // node motus.js 5
+// Les lettres rouges sont celles qui sont dans le mot et au bon endroit.
+// Les lettres jaunes sont celles qui sont dans le mot mais pas au bon endroit.
+// Un "X" est une lettre qui n'est pas dans le mot.
+
 // N'oubliez pas d'activer le son de votre device et amusez-vous bien !
 
 const readline = require("readline");
@@ -19,47 +23,35 @@ const sleep = (milliseconds) => {
   }
 };
 const isSame = (a, b) => {
-  if (a.length !== b.length) {
-    return (
-      "\nC'est perdu ! =(",
-      player.play("./assets/sounds/lose.wav", (err) => {
+  let isCharSame = true;
+  for (let i = 0; i < a.length; i++) {
+    sleep(6000);
+    if (a[i] !== b[i]) {
+      isCharSame = false;
+    } else {
+      isCharSame = true;
+    }
+    if (isCharSame === true) {
+      process.stdout.write(colors.red(a[i]));
+      player.play("./assets/sounds/valid.wav", (err) => {
         if (err) {
           console.error("Impossible de jouer le son:", err);
         }
-      }),
-      inputText.close(sleep(3000))
-    );
-  } else {
-    let isCharSame = true;
-    for (let i = 0; i < a.length; i++) {
-      sleep(6000);
-      if (a[i] !== b[i]) {
-        isCharSame = false;
-      } else {
-        isCharSame = true;
-      }
-      if (isCharSame === true) {
-        process.stdout.write(colors.red(a[i]));
-        player.play("./assets/sounds/valid.wav", (err) => {
-          if (err) {
-            console.error("Impossible de jouer le son:", err);
-          }
-        });
-      } else if (a.includes(b[i])) {
-        process.stdout.write(colors.yellow(b[i]));
-        player.play("./assets/sounds/misplaced.wav", (err) => {
-          if (err) {
-            console.error("Impossible de jouer le son:", err);
-          }
-        });
-      } else {
-        process.stdout.write("X");
-        player.play("./assets/sounds/wrong.wav", (err) => {
-          if (err) {
-            console.error("Impossible de jouer le son:", err);
-          }
-        });
-      }
+      });
+    } else if (a.includes(b[i])) {
+      process.stdout.write(colors.yellow(b[i]));
+      player.play("./assets/sounds/misplaced.wav", (err) => {
+        if (err) {
+          console.error("Impossible de jouer le son:", err);
+        }
+      });
+    } else {
+      process.stdout.write("X");
+      player.play("./assets/sounds/wrong.wav", (err) => {
+        if (err) {
+          console.error("Impossible de jouer le son:", err);
+        }
+      });
     }
   }
 };
@@ -73,7 +65,20 @@ function hideLetters(guessWord) {
   for (let i = 1; i < guessWord.length; i++) {
     hideWord += "*";
   }
-  return "Mot mystère : " + hideWord;
+  return (
+    console.log(`
+     _           _    _  _  _  _   _  _  _  _  _  _            _    _  _  _  _     
+    (_) _     _ (_) _(_)(_)(_)(_)_(_)(_)(_)(_)(_)(_)          (_) _(_)(_)(_)(_)_   
+    (_)(_)   (_)(_)(_)          (_)     (_)      (_)          (_)(_)          (_)  
+    (_) (_)_(_) (_)(_)          (_)     (_)      (_)          (_)(_)_  _  _  _     
+    (_)   (_)   (_)(_)          (_)     (_)      (_)          (_)  (_)(_)(_)(_)_   
+    (_)         (_)(_)          (_)     (_)      (_)          (_) _           (_)  
+    (_)         (_)(_)_  _  _  _(_)     (_)      (_)_  _  _  _(_)(_)_  _  _  _(_)  
+    (_)         (_)  (_)(_)(_)(_)       (_)        (_)(_)(_)(_)    (_)(_)(_)(_)    
+                                                                                   
+                                                                                  `),
+    "\n\nMot mystère : " + hideWord + "\n"
+  );
 }
 console.log(hideLetters(guessWord));
 
@@ -114,7 +119,7 @@ const playMotus = (mot) => {
               console.error("Impossible de jouer le son:", err);
             }
           }),
-          inputText.close(sleep(3000))
+          inputText.close()
         );
     }
   };
@@ -123,7 +128,7 @@ const playMotus = (mot) => {
 
   if (remainingLives != 0) {
     inputText.question(
-      `\nveuillez entrer un mot de ${guessWord.length} lettres : `,
+      `\nveuillez entrer un mot de ${guessWord.length} lettres : ` + "\n",
       playMotus,
       sleep(1000)
     );
