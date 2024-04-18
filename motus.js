@@ -40,17 +40,6 @@ const sleep = (milliseconds) => {
 // Elle affiche en rouge les lettres bien placés, en jaunes les lettres mal placés, un X si la lettre n'est pas dans guessWord
 // Petite précision : au départ cette fonction était tout en bas du code mais je l'ai replacé en haut pour plus facilement l'appeler ensuite.
 const isSame = (a, b) => {
-  if (a.length !== b.length) {
-    return (
-      console.log("\nC'est perdu ! =("),
-      inputText.close(),
-      player.play("./assets/sounds/lose.wav", (err) => {
-        if (err) {
-          console.error("Impossible de jouer le son:", err);
-        }
-      })
-    );
-  }
   // Ici j'ai créé une variable qui m'aide à définir des conditions ensuite.
   let isCharSame = true;
   for (let i = 0; i < a.length; i++) {
@@ -117,7 +106,11 @@ console.log(hideLetters(guessWord));
 const playMotus = (mot) => {
   sleep(2000, console.log("\nvous avez essayé le mot : " + mot));
 
-  isSame(guessWord, mot);
+  if (guessWord.length === mot.length) {
+    isSame(guessWord, mot);
+  } else {
+    inputText.close();
+  }
 
   // la fonction guess peremet de savoir si le le joueur a déviner le mot, elle décrémente le nombre d'essai en cas d'échec.
   const guess = () => {
@@ -136,9 +129,9 @@ const playMotus = (mot) => {
         console.log(`
         \nRaté ! Il vous reste ${remainingLives} essais`);
       }
-      if (remainingLives === 0 || guessWord.length !== mot.length)
+      if (remainingLives === 0)
         return (
-          console.log("\nC'est perdu ! =("),
+          console.log("\nC'est perdu ! 1 =("),
           player.play("./assets/sounds/lose.wav", (err) => {
             if (err) {
               console.error("Impossible de jouer le son:", err);
